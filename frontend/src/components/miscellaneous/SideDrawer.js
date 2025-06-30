@@ -23,9 +23,9 @@ import {
 } from "@chakra-ui/react";
 import { BellIcon, ChevronDownIcon } from "@chakra-ui/icons";
 import axios from "axios";
-import ChatLoading from "./ChatLoading";
+import ChatLoading from "../ChatLoading";
 import UserListItem from "../UserAvatar/UserListItem";
-import { ChatState } from "../../Context/ChatProvider";
+import { ChatState } from "../../context/ChatProvider";
 import ProfileModal from "./ProfileModal";
 
 const SideDrawer = () => {
