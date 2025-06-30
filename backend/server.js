@@ -11,7 +11,6 @@ import chatRoutes from "./routes/chatRoutes.js";
 import messageRoutes from "./routes/messageRoutes.js";
 import { notFound, errorHandler } from "./middleware/errorMiddleware.js";
 import path from "path";
-import { fileURLToPath } from "url";
 
 const app = express();
 const Port = process.env.PORT || 3000;
@@ -25,25 +24,29 @@ app.use(
   })
 );
 
-app.get("/", (req, res) => {
-  res.send("API is running");
-});
-
 app.use("/api/user", userRoutes);
 app.use("/api/chat", chatRoutes);
 app.use("/api/message", messageRoutes);
 
 //---------------------Deployment--------------------//
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+// Deployment: Serve React frontend from Express in production
+const __dirname = path.resolve();
+const frontendPath = path.join(__dirname, "../frontend/build");
+console.log("Resolved frontend path:", frontendPath);
+
 if (process.env.NODE_ENV === "production") {
-  app.use(express.static(path.join(__dirname, "/frontend/build")));
+  app.use(express.static(frontendPath));
+
+  app.get("*", (req, res) => {
+    res.sendFile(path.join(frontendPath, "index.html"));
+  });
 } else {
   app.get("/", (req, res) => {
-    res.send("API is Running Successfully");
+    res.send("API is running");
   });
 }
+
 //---------------------Deployment--------------------//
 
 app.use(notFound);
