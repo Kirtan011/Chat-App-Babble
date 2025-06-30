@@ -17,12 +17,16 @@ import ProfileModal from "./miscellaneous/ProfileModal";
 import UpdateGroupChatModal from "./miscellaneous/UpdateGroupChatModal";
 import axios from "axios";
 import ScrollableChat from "./ScrollableChat";
-import { io } from "socket.io-client";
+import io from "socket.io-client";
 import Lottie from "lottie-react";
 import typingAnimation from "../animation/typing.json";
 import api from "../config/axios";
 
-const ENDPOINT = "http://localhost:5000";
+const ENDPOINT =
+  process.env.NODE_ENV === "production"
+    ? "https://chat-app-babble.onrender.com"
+    : "http://localhost:5000";
+
 let socket;
 let selectedChatCompare;
 
@@ -32,6 +36,8 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
   const [newMessage, setNewMessage] = useState("");
   const [socketConnected, setSocketConnected] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
+
+  const messagesEndRef = useRef(null);
 
   const typingTimeoutRef = useRef(null);
   const lastTypingTimeRef = useRef(null);
@@ -74,6 +80,12 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
     socket.emit("stop typing", selectedChat._id);
     setIsTyping(false);
   }, [selectedChat]);
+
+  useEffect(() => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [messages]);
 
   const fetchMessages = async () => {
     if (!selectedChat) return;
@@ -142,7 +154,6 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
             Authorization: `Bearer ${user.token}`,
           },
         };
-
         const { data } = await api.post(
           "/api/message",
           {
@@ -155,6 +166,9 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
         setNewMessage("");
         socket.emit("new message", data);
         setMessages([...messages, data]);
+
+        // Auto-scroll only when sender sends the message
+        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
       } catch (error) {
         toast({
           title: "Error Occurred!",
@@ -284,6 +298,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
                 }}
               >
                 <ScrollableChat messages={messages} />
+                <div ref={messagesEndRef} />
               </Box>
             )}
 

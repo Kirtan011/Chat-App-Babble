@@ -52,9 +52,9 @@ const server = http.createServer(app);
 
 // Socket.IO Setup
 const io = new Server(server, {
-  pingTimeout: 60000,
   cors: {
     origin: ["http://localhost:3000", "https://chat-app-babble.onrender.com"],
+    methods: ["GET", "POST"],
     credentials: true,
   },
 });
