@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useToast } from "@chakra-ui/react";
 import { useHistory } from "react-router-dom";
 import axios from "axios";
+import api from "../../../config/axios";
 
 const Signup = () => {
   const [name, setName] = useState();
@@ -37,7 +38,7 @@ const Signup = () => {
       data.append("file", pics);
       data.append("upload_preset", "chat-app"); // upload-preset name from cloudinary
       data.append("cloud_name", "kirtan011"); // cloud name from cloudinary
-      axios
+      api
         .post("https://api.cloudinary.com/v1_1/kirtan011/image/upload", data)
         .then((response) => {
           console.log("Cloudinary response:", response);
@@ -103,7 +104,7 @@ const Signup = () => {
         },
       };
 
-      const { data } = await axios.post(
+      const { data } = await api.post(
         "/api/user",
         { name, email, password, pic },
         config

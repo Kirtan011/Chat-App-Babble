@@ -29,6 +29,7 @@ import axios from "axios";
 import ChatLoading from "../ChatLoading.js";
 import UserListItem from "../UserAvatar/UserListItem.js";
 import { getSender } from "../config/ChatLogics.js";
+import api from "../../../config/axios.js";
 
 const SideDrawer = () => {
   const [search, setSearch] = useState("");
@@ -73,7 +74,7 @@ const SideDrawer = () => {
           Authorization: `Bearer ${user.token}`,
         },
       };
-      const { data } = await axios.get(`/api/user?search=${search}`, config);
+      const { data } = await api.get(`/api/user?search=${search}`, config);
       setSearchResult(data);
     } catch (error) {
       toast({
@@ -98,7 +99,7 @@ const SideDrawer = () => {
           Authorization: `Bearer ${user.token}`,
         },
       };
-      const { data } = await axios.post("/api/chat", { userId }, config);
+      const { data } = await api.post("/api/chat", { userId }, config);
 
       if (!chats.find((c) => c._id === data._id)) setChats([data, ...chats]);
       setSelectedChat(data);

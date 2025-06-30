@@ -22,6 +22,7 @@ import { ChatState } from "../../context/ChatProvider";
 import UserBadgeItem from "../UserAvatar/UserBadgeItem";
 import axios from "axios";
 import UserListItem from "../UserAvatar/UserListItem";
+import api from "../../../config/axios";
 
 const UpdateGroupChatModal = ({ fetchAgain, setFetchAgain, fetchMessages }) => {
   const [newGroupChatName, setNewGroupChatName] = useState("");
@@ -39,7 +40,7 @@ const UpdateGroupChatModal = ({ fetchAgain, setFetchAgain, fetchMessages }) => {
     try {
       setRenameLoading(true);
       const config = { headers: { Authorization: `Bearer ${user.token}` } };
-      const { data } = await axios.put(
+      const { data } = await api.put(
         "/api/chat/rename",
         { chatId: selectedChat._id, chatName: newGroupChatName },
         config
@@ -67,10 +68,7 @@ const UpdateGroupChatModal = ({ fetchAgain, setFetchAgain, fetchMessages }) => {
     try {
       setLoading(true);
       const config = { headers: { Authorization: `Bearer ${user.token}` } };
-      const { data } = await axios.get(
-        `/api/user?searchedUser=${query}`,
-        config
-      );
+      const { data } = await api.get(`/api/user?searchedUser=${query}`, config);
       setSearchResult(data);
     } catch {
       toast({
@@ -108,7 +106,7 @@ const UpdateGroupChatModal = ({ fetchAgain, setFetchAgain, fetchMessages }) => {
     try {
       setLoading(true);
       const config = { headers: { Authorization: `Bearer ${user.token}` } };
-      const { data } = await axios.put(
+      const { data } = await api.put(
         "/api/chat/groupadd",
         { chatId: selectedChat._id, userId: userToAdd._id },
         config
@@ -145,7 +143,7 @@ const UpdateGroupChatModal = ({ fetchAgain, setFetchAgain, fetchMessages }) => {
     try {
       setLoading(true);
       const config = { headers: { Authorization: `Bearer ${user.token}` } };
-      const { data } = await axios.put(
+      const { data } = await api.put(
         "/api/chat/groupremove",
         { chatId: selectedChat._id, userId: userToRemove._id },
         config
