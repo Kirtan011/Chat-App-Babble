@@ -22,7 +22,7 @@ import { ChatState } from "../../context/ChatProvider";
 import UserBadgeItem from "../UserAvatar/UserBadgeItem";
 import axios from "axios";
 import UserListItem from "../UserAvatar/UserListItem";
-import api from "../../../config/axios";
+import api from "../../config/axios";
 
 const UpdateGroupChatModal = ({ fetchAgain, setFetchAgain, fetchMessages }) => {
   const [newGroupChatName, setNewGroupChatName] = useState("");

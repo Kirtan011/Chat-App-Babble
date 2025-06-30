@@ -20,7 +20,7 @@ import ScrollableChat from "./ScrollableChat";
 import { io } from "socket.io-client";
 import Lottie from "lottie-react";
 import typingAnimation from "../animation/typing.json";
-import api from "../../config/axios";
+import api from "../config/axios";
 
 const ENDPOINT = "http://localhost:5000";
 let socket;

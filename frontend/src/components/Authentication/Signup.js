@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useToast } from "@chakra-ui/react";
 import { useHistory } from "react-router-dom";
 import axios from "axios";
-import api from "../../../config/axios";
+import api from "../../config/axios";
 
 const Signup = () => {
   const [name, setName] = useState();

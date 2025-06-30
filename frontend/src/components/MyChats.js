@@ -16,7 +16,7 @@ import ChatLoading from "./ChatLoading";
 import { getSenderFull } from "./config/ChatLogics";
 import GroupChatModal from "./miscellaneous/GroupChatModal";
 import moment from "moment";
-import api from "../../config/axios";
+import api from "../config/axios";
 
 const MyChats = ({ fetchAgain }) => {
   const { user, selectedChat, setSelectedChat, chats, setChats } = ChatState();

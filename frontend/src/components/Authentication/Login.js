@@ -11,7 +11,7 @@ import {
 } from "@chakra-ui/react";
 import axios from "axios";
 import { useHistory } from "react-router-dom";
-import api from "../../../config/axios";
+import api from "../../config/axios";
 
 const Login = () => {
   const [show, setShow] = useState(false);

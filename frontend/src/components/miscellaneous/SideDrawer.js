@@ -29,7 +29,7 @@ import axios from "axios";
 import ChatLoading from "../ChatLoading.js";
 import UserListItem from "../UserAvatar/UserListItem.js";
 import { getSender } from "../config/ChatLogics.js";
-import api from "../../../config/axios.js";
+import api from "../../config/axios.js";
 
 const SideDrawer = () => {
   const [search, setSearch] = useState("");
