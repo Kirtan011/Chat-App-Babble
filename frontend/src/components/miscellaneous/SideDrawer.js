@@ -129,16 +129,24 @@ const SideDrawer = () => {
         borderColor="gray.100"
         shadow="md"
       >
-        <Tooltip label="Search Users to chat" hasArrow placement="bottom-start">
+        <Tooltip label="Search Users" hasArrow placement="bottom-start">
           <Button
             variant="ghost"
             onClick={onOpen}
             borderRadius="full"
             _hover={{ bg: "gray.100" }}
+            p={2}
+            display="flex"
+            alignItems="center"
+            justifyContent="center"
           >
-            <i />
-            <Text ml={2} display={{ base: "none", md: "inline" }}>
-              🔎 Search User
+            <Text fontSize={{ base: "lg", md: "md" }}>🔎</Text>
+            <Text
+              ml={2}
+              display={{ base: "none", sm: "none", md: "inline" }}
+              fontWeight="semibold"
+            >
+              Search User
             </Text>
           </Button>
         </Tooltip>

@@ -34,6 +34,7 @@ const Homepage = () => {
         w="100%"
         m="40px 0 15px 0"
         borderRadius="lg"
+        boxShadow="1px 1px 5px 1px gray"
       >
         <Text
           fontSize="5xl"
@@ -48,7 +49,7 @@ const Homepage = () => {
       </Box>
       <Box bg="white" w="100%" p={4} borderRadius="lg" borderWidth="1px">
         <Tabs variant="soft-rounded" colorScheme="blue">
-          <TabList mb="1em">
+          <TabList mb={{ base: "0", md: "1em" }}>
             <Tab w="50%">Login</Tab>
             <Tab w="50%">Sign Up</Tab>
           </TabList>

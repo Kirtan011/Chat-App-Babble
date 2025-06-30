@@ -28,27 +28,6 @@ app.use("/api/user", userRoutes);
 app.use("/api/chat", chatRoutes);
 app.use("/api/message", messageRoutes);
 
-//---------------------Deployment--------------------//
-
-// Deployment: Serve React frontend from Express in production
-const __dirname = path.resolve();
-const frontendPath = path.join(__dirname, "../frontend/build");
-console.log("Resolved frontend path:", frontendPath);
-
-if (process.env.NODE_ENV === "production") {
-  app.use(express.static(frontendPath));
-
-  app.get("*", (req, res) => {
-    res.sendFile(path.join(frontendPath, "index.html"));
-  });
-} else {
-  app.get("/", (req, res) => {
-    res.send("API is running");
-  });
-}
-
-//---------------------Deployment--------------------//
-
 app.use(notFound);
 app.use(errorHandler);
 
@@ -100,6 +79,27 @@ io.on("connection", (socket) => {
     socket.leave(userData._id);
   });
 });
+
+//---------------------Deployment--------------------//
+
+// Deployment: Serve React frontend from Express in production
+const __dirname = path.resolve();
+const frontendPath = path.join(__dirname, "../frontend/build");
+console.log("Resolved frontend path:", frontendPath);
+
+if (process.env.NODE_ENV === "production") {
+  app.use(express.static(frontendPath));
+
+  app.get("*", (req, res) => {
+    res.sendFile(path.join(frontendPath, "index.html"));
+  });
+} else {
+  app.get("/", (req, res) => {
+    res.send("API is running");
+  });
+}
+
+//---------------------Deployment--------------------//
 
 server.listen(Port, () => {
   console.log(`Server started on port: ${Port}`);
