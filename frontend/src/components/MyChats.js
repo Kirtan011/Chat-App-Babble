@@ -136,7 +136,11 @@ const MyChats = ({ fetchAgain }) => {
                         }
                         src={!chat.isGroupChat ? displayUser?.pic : undefined}
                       />
-                      <Text fontSize="lg" fontWeight="bold" color="gray.700">
+                      <Text
+                        fontSize={{ base: "md", md: "lg" }}
+                        fontWeight="bold"
+                        color="gray.700"
+                      >
                         {chat.isGroupChat ? chat.chatName : displayUser?.name}
                       </Text>
                     </HStack>

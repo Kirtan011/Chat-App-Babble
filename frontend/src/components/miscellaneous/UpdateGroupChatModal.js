@@ -16,11 +16,11 @@ import {
   Input,
   VStack,
   Spinner,
+  useBreakpointValue,
 } from "@chakra-ui/react";
 import { ViewIcon } from "@chakra-ui/icons";
 import { ChatState } from "../../context/ChatProvider";
 import UserBadgeItem from "../UserAvatar/UserBadgeItem";
-import axios from "axios";
 import UserListItem from "../UserAvatar/UserListItem";
 import api from "../../config/axios";
 
@@ -34,6 +34,7 @@ const UpdateGroupChatModal = ({ fetchAgain, setFetchAgain, fetchMessages }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { selectedChat, setSelectedChat, user } = ChatState();
   const toast = useToast();
+  const modalSize = useBreakpointValue({ base: "full", md: "lg" });
 
   const handleRename = async () => {
     if (!newGroupChatName) return;
@@ -87,7 +88,7 @@ const UpdateGroupChatModal = ({ fetchAgain, setFetchAgain, fetchMessages }) => {
     if (selectedChat.users.find((u) => u._id === userToAdd._id)) {
       return toast({
         title: "User already in group!",
-        status: "error",
+        status: "warning",
         duration: 2000,
         isClosable: true,
         position: "top",
@@ -95,7 +96,7 @@ const UpdateGroupChatModal = ({ fetchAgain, setFetchAgain, fetchMessages }) => {
     }
     if (selectedChat.groupAdmin?._id !== user._id) {
       return toast({
-        title: "Only admins can add someone!",
+        title: "Only admins can add users",
         status: "error",
         duration: 2000,
         isClosable: true,
@@ -150,7 +151,6 @@ const UpdateGroupChatModal = ({ fetchAgain, setFetchAgain, fetchMessages }) => {
       );
       if (userToRemove._id === user._id) setSelectedChat(null);
       else setSelectedChat(data);
-
       setFetchAgain(!fetchAgain);
       fetchMessages();
     } catch {
@@ -172,14 +172,15 @@ const UpdateGroupChatModal = ({ fetchAgain, setFetchAgain, fetchMessages }) => {
         icon={<ViewIcon />}
         onClick={onOpen}
         variant="outline"
-        colorScheme="blue"
+        colorScheme="gray"
         aria-label="View Group"
+        size="sm"
       />
 
-      <Modal isOpen={isOpen} onClose={onClose} isCentered size="lg">
+      <Modal isOpen={isOpen} onClose={onClose} size={modalSize} isCentered>
         <ModalOverlay />
-        <ModalContent borderRadius="lg" bg="gray.700" color="white">
-          <ModalHeader textAlign="center" fontSize="2xl" fontWeight="bold">
+        <ModalContent borderRadius="xl" bg="gray.100" color="gray.800">
+          <ModalHeader textAlign="center" fontSize="2xl" fontWeight="semibold">
             {selectedChat.chatName}
           </ModalHeader>
           <ModalCloseButton />
@@ -187,16 +188,17 @@ const UpdateGroupChatModal = ({ fetchAgain, setFetchAgain, fetchMessages }) => {
             <Box
               display="flex"
               flexWrap="wrap"
-              mb={3}
+              gap={2}
+              p={2}
+              mb={4}
               maxH="120px"
               overflowY="auto"
-              p={2}
-              border="1px solid"
-              borderColor="gray.600"
               borderRadius="md"
-              bg="gray.600"
+              bg="gray.200"
+              border="1px solid"
+              borderColor="gray.300"
             >
-              {selectedChat?.users?.map((u) => (
+              {selectedChat.users.map((u) => (
                 <UserBadgeItem
                   key={u._id}
                   user={u}
@@ -205,22 +207,21 @@ const UpdateGroupChatModal = ({ fetchAgain, setFetchAgain, fetchMessages }) => {
               ))}
             </Box>
 
-            <VStack spacing={4}>
-              <FormControl display="flex">
+            <VStack spacing={3}>
+              <FormControl display="flex" alignItems="center">
                 <Input
                   placeholder="Rename Group"
                   value={newGroupChatName}
                   onChange={(e) => setNewGroupChatName(e.target.value)}
-                  bg="gray.600"
+                  bg="white"
+                  borderColor="gray.300"
                   _placeholder={{ color: "gray.400" }}
-                  borderColor="gray.500"
-                  color="white"
                 />
                 <Button
                   ml={2}
                   isLoading={renameLoading}
                   onClick={handleRename}
-                  colorScheme="teal"
+                  colorScheme="blue"
                 >
                   Update
                 </Button>
@@ -230,25 +231,24 @@ const UpdateGroupChatModal = ({ fetchAgain, setFetchAgain, fetchMessages }) => {
                 <Input
                   placeholder="Search to add members"
                   onChange={(e) => handleSearch(e.target.value)}
-                  bg="gray.600"
+                  bg="white"
+                  borderColor="gray.300"
                   _placeholder={{ color: "gray.400" }}
-                  borderColor="gray.500"
-                  color="white"
                 />
               </FormControl>
             </VStack>
 
             <Box mt={3} maxH="150px" overflowY="auto">
               {loading ? (
-                <Spinner color="teal.400" />
+                <Spinner color="blue.500" />
               ) : (
                 searchResult
-                  ?.slice(0, 4)
-                  .map((u) => (
+                  .slice(0, 4)
+                  .map((user) => (
                     <UserListItem
-                      key={u._id}
-                      user={u}
-                      handleFunction={() => handleAddUser(u)}
+                      key={user._id}
+                      user={user}
+                      handleFunction={() => handleAddUser(user)}
                     />
                   ))
               )}
@@ -259,8 +259,9 @@ const UpdateGroupChatModal = ({ fetchAgain, setFetchAgain, fetchMessages }) => {
             <Button
               w="full"
               colorScheme="red"
+              variant="outline"
               onClick={() => handleRemove(user)}
-              _hover={{ bg: "red.600" }}
+              _hover={{ bg: "red.100" }}
             >
               Leave Group
             </Button>

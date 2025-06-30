@@ -14,9 +14,9 @@ import {
   FormControl,
   Spinner,
   Box,
+  Text,
 } from "@chakra-ui/react";
 import { ChatState } from "../../context/ChatProvider";
-import axios from "axios";
 import UserListItem from "../UserAvatar/UserListItem";
 import UserBadgeItem from "../UserAvatar/UserBadgeItem";
 import api from "../../config/axios";
@@ -27,13 +27,11 @@ const GroupChatModal = ({ children }) => {
   const [selectedUsers, setSelectedUsers] = useState([]);
   const [searchedUser, setSearchedUser] = useState("");
   const [searchResult, setSearchResult] = useState([]);
-
   const [loading, setLoading] = useState(false);
 
   const toast = useToast();
   const { user, chats, setChats } = ChatState();
 
-  //Everytime this Modal opens(renders) it clears all the previous data
   useEffect(() => {
     if (isOpen) {
       setGroupChatName("");
@@ -44,46 +42,37 @@ const GroupChatModal = ({ children }) => {
     }
   }, [isOpen]);
 
-  //Gives top 4 Searched Users
   const handleSearch = async (query) => {
     setSearchedUser(query);
-
-    if (!query) {
-      setSearchResult([]); // clear results when input is empty
-      return;
-    }
+    if (!query) return setSearchResult([]);
 
     try {
       setLoading(true);
-
       const config = {
-        headers: {
-          Authorization: `Bearer ${user.token}`,
-        },
+        headers: { Authorization: `Bearer ${user.token}` },
       };
       const { data } = await api.get(`/api/user?searchedUser=${query}`, config);
       setSearchResult(data);
-      console.log(data);
       setLoading(false);
     } catch (error) {
       toast({
-        title: "User not available!",
-        description: "Failed to load up the users ",
+        title: "Search failed",
+        description: "Could not fetch users",
         status: "error",
         duration: 2000,
         isClosable: true,
         position: "top",
       });
+      setLoading(false);
     }
-    setLoading(false);
   };
 
-  //Creates Group Chat
   const handleSubmit = async () => {
-    if (!groupChatName || !selectedUsers) {
+    if (!groupChatName || selectedUsers.length === 0) {
       toast({
-        title: "Please fill all the field!",
-        status: "error",
+        title: "Missing fields",
+        description: "Group name and members required",
+        status: "warning",
         duration: 2000,
         isClosable: true,
         position: "top",
@@ -93,24 +82,17 @@ const GroupChatModal = ({ children }) => {
 
     try {
       const config = {
-        headers: {
-          Authorization: `Bearer ${user.token}`,
-        },
+        headers: { Authorization: `Bearer ${user.token}` },
       };
-
       const { data } = await api.post(
         "/api/chat/group",
-        {
-          name: groupChatName,
-          users: selectedUsers,
-        },
+        { name: groupChatName, users: selectedUsers },
         config
       );
-
       setChats([data, ...chats]);
       onClose();
       toast({
-        title: "Group Chat has been created  !",
+        title: "Group created!",
         status: "success",
         duration: 3000,
         isClosable: true,
@@ -118,7 +100,7 @@ const GroupChatModal = ({ children }) => {
       });
     } catch (error) {
       toast({
-        title: "Group not created!",
+        title: "Failed to create group",
         status: "error",
         duration: 3000,
         isClosable: true,
@@ -127,12 +109,11 @@ const GroupChatModal = ({ children }) => {
     }
   };
 
-  //Add User to Group
   const handleAddUser = (userToAdd) => {
     if (selectedUsers.some((u) => u._id === userToAdd._id)) {
       toast({
         title: "User already added",
-        status: "warning",
+        status: "info",
         duration: 2000,
         isClosable: true,
         position: "top",
@@ -142,9 +123,8 @@ const GroupChatModal = ({ children }) => {
     setSelectedUsers([...selectedUsers, userToAdd]);
   };
 
-  //Delete User of Group
-  const handleDeleteUser = (deleteUser) => {
-    setSelectedUsers(selectedUsers.filter((sel) => sel._id !== deleteUser._id));
+  const handleDeleteUser = (userToDelete) => {
+    setSelectedUsers(selectedUsers.filter((u) => u._id !== userToDelete._id));
   };
 
   return (
@@ -154,66 +134,54 @@ const GroupChatModal = ({ children }) => {
       <Modal
         isOpen={isOpen}
         onClose={onClose}
-        isCentered={false}
-        blockScrollOnMount={false}
+        size="lg"
+        scrollBehavior="inside"
       >
         <ModalOverlay />
-        <ModalContent
-          mt="20px" // Push down from top
-          maxHeight="90vh" // Don't exceed screen
-          overflow="hidden" // Prevent scroll bleed
-        >
-          <ModalHeader
-            fontSize="35px"
-            fontFamily="Work sans"
-            display="flex"
-            justifyContent="center"
-          >
+        <ModalContent borderRadius="2xl" boxShadow="lg">
+          <ModalHeader textAlign="center" fontSize="2xl" fontWeight="bold">
             Create Group Chat
           </ModalHeader>
           <ModalCloseButton />
 
-          <ModalBody display="flex" flexDir="column" overflow="hidden">
+          <ModalBody display="flex" flexDirection="column" gap={4}>
             <FormControl>
               <Input
-                type="text"
                 placeholder="Group name"
-                mb={3}
                 value={groupChatName}
                 onChange={(e) => setGroupChatName(e.target.value)}
+                borderRadius="xl"
               />
             </FormControl>
 
             <FormControl>
               <Input
-                type="text"
-                placeholder="Add member eg. Kirtan, Jeeval, Vikas..."
-                mb={1}
+                placeholder="Add users (e.g. John, Alice...)"
                 onChange={(e) => handleSearch(e.target.value)}
+                borderRadius="xl"
               />
             </FormControl>
 
-            {/* Selected Users */}
-            <Box
-              w="100%"
-              display="flex"
-              flexWrap="wrap"
-              mb={2}
-              overflowX="hidden"
-            >
-              {selectedUsers.map((u) => (
+            <Box display="flex" flexWrap="wrap" gap={2}>
+              {selectedUsers.map((user) => (
                 <UserBadgeItem
-                  key={u._id}
-                  user={u}
-                  handleFunction={() => handleDeleteUser(u)}
+                  key={user._id}
+                  user={user}
+                  handleFunction={() => handleDeleteUser(user)}
                 />
               ))}
             </Box>
 
-            {/* Scrollable Search Result Area */}
-            <Box w="100%" flex="1" overflowY="auto" overflowX="hidden" pr={1}>
+            <Box
+              maxH="200px"
+              overflowY="auto"
+              pr={1}
+              display="flex"
+              flexDirection="column"
+              gap={2}
+            >
               {loading ? (
-                <Spinner />
+                <Spinner alignSelf="center" />
               ) : (
                 searchResult
                   ?.slice(0, 4)
@@ -225,11 +193,21 @@ const GroupChatModal = ({ children }) => {
                     />
                   ))
               )}
+              {!loading && searchedUser && searchResult.length === 0 && (
+                <Text color="gray.500" textAlign="center" fontSize="sm">
+                  No users found
+                </Text>
+              )}
             </Box>
           </ModalBody>
 
           <ModalFooter>
-            <Button colorScheme="blue" mr={3} onClick={handleSubmit}>
+            <Button
+              colorScheme="blue"
+              onClick={handleSubmit}
+              borderRadius="full"
+              px={6}
+            >
               Create Chat
             </Button>
           </ModalFooter>

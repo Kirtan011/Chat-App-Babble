@@ -192,38 +192,48 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
         <Box
           display="flex"
           flexDirection="column"
-          justifyContent="flex-start"
+          justifyContent="space-between"
           alignItems="stretch"
           h="100%"
           w="100%"
+          bg="gray.50"
+          borderRadius="2xl"
+          p={{ base: 2, md: 4 }}
+          boxShadow="lg"
+          overflow="hidden"
         >
           {/* Header */}
           <Box
             display="flex"
             alignItems="center"
             justifyContent="space-between"
-            px={4}
-            py={3}
+            px={{ base: 2, md: 4 }}
+            py={{ base: 2, md: 3 }}
             fontFamily="Work sans"
-            fontSize={{ base: "24px", md: "30px" }}
+            fontSize={{ base: "20px", md: "28px" }}
+            fontWeight="bold"
+            borderBottom="1px solid"
+            borderColor="gray.200"
+            bg="white"
             borderRadius="lg"
             boxShadow="sm"
-            bg="white"
-            mb={1}
           >
             <IconButton
               display={{ base: "flex", md: "none" }}
               icon={<ArrowBackIcon />}
               onClick={() => setSelectedChat()}
+              variant="ghost"
+              aria-label="Back"
             />
+
             {!selectedChat.isGroupChat ? (
               <>
-                {getSender(user, selectedChat.users)}
+                <Text>{getSender(user, selectedChat.users)}</Text>
                 <ProfileModal user={getSenderFull(user, selectedChat.users)} />
               </>
             ) : (
               <>
-                <span>{selectedChat.chatName}</span>
+                <Text>{selectedChat.chatName}</Text>
                 <UpdateGroupChatModal
                   fetchAgain={fetchAgain}
                   setFetchAgain={setFetchAgain}
@@ -235,37 +245,42 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
 
           {/* Message Area */}
           <Box
+            flex="1"
             display="flex"
             flexDir="column"
             justifyContent="flex-end"
-            px={3}
-            py={2}
             bg="gray.100"
-            w="100%"
-            h="100%"
+            p={3}
+            mt={2}
             borderRadius="xl"
-            overflow="hidden"
             boxShadow="inner"
+            overflow="hidden"
           >
             {loading ? (
               <Spinner
-                thickness="2px"
-                speed="0.8s"
+                thickness="3px"
+                speed="0.65s"
                 emptyColor="gray.100"
-                w={20}
-                h={20}
+                w={16}
+                h={16}
                 alignSelf="center"
-                margin="auto"
-                color="blue.500"
+                color="blue.400"
               />
             ) : (
               <Box
                 className="messages"
-                style={{
-                  height: "100%",
-                  overflowY: "auto",
+                h="100%"
+                overflowY="auto"
+                pr={2}
+                sx={{
                   scrollbarWidth: "thin",
-                  paddingRight: "4px",
+                  "&::-webkit-scrollbar": {
+                    width: "5px",
+                  },
+                  "&::-webkit-scrollbar-thumb": {
+                    background: "#CBD5E0",
+                    borderRadius: "10px",
+                  },
                 }}
               >
                 <ScrollableChat messages={messages} />
@@ -281,52 +296,57 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
                 />
               </Box>
             )}
-
-            {/* Input and Send */}
-            <FormControl
-              display="flex"
-              alignItems="center"
-              gap={2}
-              mt={3}
-              onKeyDown={sendMessage}
-              isRequired
-            >
-              <Input
-                variant="filled"
-                bg="white"
-                flex="1"
-                borderRadius="20px"
-                fontSize={{ base: "15px", md: "18px" }}
-                placeholder="Type a message..."
-                onChange={handleTyping}
-                value={newMessage}
-                _focus={{ bg: "white", borderColor: "blue.300" }}
-              />
-
-              <IconButton
-                icon={<ArrowForwardIcon />}
-                aria-label="Send"
-                bg="blue.500"
-                color="white"
-                _hover={{ bg: "blue.600" }}
-                borderRadius="full"
-                onClick={sendMessage}
-                display={{ base: "flex", md: "none" }}
-              />
-
-              <Button
-                bg="blue.500"
-                color="white"
-                _hover={{ bg: "blue.600" }}
-                borderRadius="full"
-                px={6}
-                onClick={sendMessage}
-                display={{ base: "none", md: "flex" }}
-              >
-                Send
-              </Button>
-            </FormControl>
           </Box>
+
+          {/* Input */}
+          <FormControl
+            onKeyDown={sendMessage}
+            isRequired
+            mt={3}
+            display="flex"
+            gap={2}
+            alignItems="center"
+          >
+            <Input
+              variant="filled"
+              bg="white"
+              placeholder="Type a message..."
+              borderRadius="full"
+              px={5}
+              py={6}
+              value={newMessage}
+              onChange={handleTyping}
+              fontSize="18px"
+              _focus={{
+                borderColor: "blue.300",
+                boxShadow: "0 0 0 2px rgba(66,153,225,0.6)",
+                bg: "white",
+              }}
+            />
+
+            <IconButton
+              icon={<ArrowForwardIcon />}
+              aria-label="Send"
+              bg="blue.500"
+              color="white"
+              borderRadius="full"
+              _hover={{ bg: "blue.600" }}
+              onClick={sendMessage}
+              display={{ base: "flex", md: "none" }}
+            />
+
+            <Button
+              display={{ base: "none", md: "flex" }}
+              bg="blue.500"
+              color="white"
+              borderRadius="full"
+              px={6}
+              onClick={sendMessage}
+              _hover={{ bg: "blue.600" }}
+            >
+              Send
+            </Button>
+          </FormControl>
         </Box>
       ) : (
         <Box
@@ -337,8 +357,10 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
           w="100%"
           textAlign="center"
           flexDirection="column"
+          bg="gray.50"
+          borderRadius="2xl"
         >
-          <Text fontSize="3xl" pb={3} fontFamily="Work sans">
+          <Text fontSize="3xl" fontFamily="Work sans" color="gray.600">
             Click on a user to start chatting
           </Text>
         </Box>
