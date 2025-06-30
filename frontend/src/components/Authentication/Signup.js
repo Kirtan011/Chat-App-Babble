@@ -19,6 +19,7 @@ const Signup = () => {
   const toast = useToast();
   const history = useHistory();
 
+  //Handle Profile Pic Upload to cloudinary to Database
   const postDetails = (pics) => {
     setLoading(true);
     if (pics === undefined) {
@@ -38,7 +39,7 @@ const Signup = () => {
       data.append("file", pics);
       data.append("upload_preset", "chat-app"); // upload-preset name from cloudinary
       data.append("cloud_name", "kirtan011"); // cloud name from cloudinary
-      api
+      axios
         .post("https://api.cloudinary.com/v1_1/kirtan011/image/upload", data)
         .then((response) => {
           console.log("Cloudinary response:", response);
@@ -58,6 +59,8 @@ const Signup = () => {
         });
     }
   };
+
+  //Handle Sign Up Submit
   const submitHandler = async () => {
     setLoading(true);
 
