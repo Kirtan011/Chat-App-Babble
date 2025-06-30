@@ -19,7 +19,7 @@ connectDB();
 app.use(express.json());
 app.use(
   cors({
-    origin: ["http://localhost:3000", "https://chat-app-babble.onrender.com/"],
+    origin: ["http://localhost:3000", "https://chat-app-babble.onrender.com"],
     credentials: true,
   })
 );
@@ -57,7 +57,7 @@ const server = http.createServer(app);
 const io = new Server(server, {
   pingTimeout: 60000,
   cors: {
-    origin: ["http://localhost:3000", "https://chat-app-babble.onrender.com/"],
+    origin: ["http://localhost:3000", "https://chat-app-babble.onrender.com"],
     credentials: true,
   },
 });

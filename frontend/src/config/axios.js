@@ -7,7 +7,9 @@ const api = axios.create({
   baseURL:
     process.env.NODE_ENV === "development"
       ? "http://127.0.0.1:5000"
-      : "https://chat-app-backend-fs2e.onrender.com", // <-- Replace with your actual backend URL
+      : "https://chat-app-backend-fs2e.onrender.com",
+  withCredentials: true, // ✅ IMPORTANT
+  // <-- Replace with your actual backend URL
 });
 
 export default api;
