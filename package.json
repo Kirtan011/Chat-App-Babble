@@ -4,7 +4,7 @@
   "main": "server.js",
   "type": "module",
   "scripts": {
-  "start": "node backend/server.js"
+    "start": "node backend/server.js"
   },
   "author": "Kirtan Suthar",
   "license": "ISC",
