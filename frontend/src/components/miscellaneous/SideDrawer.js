@@ -135,9 +135,9 @@ const SideDrawer = () => {
             borderRadius="full"
             _hover={{ bg: "gray.100" }}
           >
-            <i className="fas fa-search" />
+            <i />
             <Text ml={2} display={{ base: "none", md: "inline" }}>
-              Search User
+              🔎 Search User
             </Text>
           </Button>
         </Tooltip>
