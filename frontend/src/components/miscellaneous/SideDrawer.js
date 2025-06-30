@@ -216,7 +216,12 @@ const SideDrawer = () => {
         </Flex>
       </Flex>
 
-      <Drawer placement="left" onClose={onClose} isOpen={isOpen} size="sm">
+      <Drawer
+        placement="left"
+        onClose={onClose}
+        isOpen={isOpen}
+        size={{ base: "xs", md: "sm" }}
+      >
         <DrawerOverlay />
         <DrawerContent borderRadius="md">
           <DrawerHeader borderBottomWidth="1px" textAlign="center">
