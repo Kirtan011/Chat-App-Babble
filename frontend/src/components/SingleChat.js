@@ -166,9 +166,6 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
         setNewMessage("");
         socket.emit("new message", data);
         setMessages([...messages, data]);
-
-        // Auto-scroll only when sender sends the message
-        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
       } catch (error) {
         toast({
           title: "Error Occurred!",

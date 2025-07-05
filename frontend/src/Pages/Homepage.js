@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useLayoutEffect } from "react";
 import {
   Container,
   Box,
@@ -16,13 +16,12 @@ import { useHistory } from "react-router-dom/cjs/react-router-dom.min.js";
 const Homepage = () => {
   const history = useHistory();
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const user = JSON.parse(localStorage.getItem("userInfo"));
-
     if (user) {
-      history.push("/");
+      history.push("/chats");
     }
-  }, [history]);
+  }, []);
 
   return (
     <Container maxW="xl" centerContent>

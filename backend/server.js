@@ -1,4 +1,3 @@
-// server.js
 import express from "express";
 import "dotenv/config.js";
 import cors from "cors";
@@ -15,25 +14,36 @@ import { notFound, errorHandler } from "./middleware/errorMiddleware.js";
 const app = express();
 const port = process.env.PORT || 5000;
 
+// Connect to MongoDB
 connectDB();
+
+// Middleware
 app.use(express.json());
+
+// ✅ CORRECT CORS: Allow only frontend origins (not your own backend URL)
+const allowedOrigins = [
+  "http://localhost:3000", // dev
+  "https://chat-app-babble.vercel.app", // deployed frontend
+];
+
 app.use(
   cors({
-    origin: [
-      "http://localhost:3000",
-      "https://chat-app-babble.onrender.com",
-      "https://chat-app-babble.vercel.app",
-    ],
+    origin: allowedOrigins,
     credentials: true,
   })
 );
 
-// API Endpoints
+// API routes
 app.use("/api/user", userRoutes);
 app.use("/api/chat", chatRoutes);
 app.use("/api/message", messageRoutes);
 
-// Serve React frontend in production
+// ✅ Health check (for Render cold start)
+app.get("/api/user/health-check", (req, res) => {
+  res.send("Backend awake");
+});
+
+// Production (serve frontend if hosted together — optional if Vercel handles it)
 const __dirnameResolved = path.resolve();
 if (process.env.NODE_ENV === "production") {
   const frontendPath = path.join(__dirnameResolved, "../frontend/build");
@@ -48,35 +58,41 @@ if (process.env.NODE_ENV === "production") {
   });
 }
 
-// Error Handling
+// Error middleware
 app.use(notFound);
 app.use(errorHandler);
 
+// Start HTTP server and bind Socket.IO
 const server = http.createServer(app);
 
-// Socket.IO Setup
 const io = new Server(server, {
+  pingTimeout: 60000,
   cors: {
-    origin: [
-      "http://localhost:3000",
-      "https://chat-app-babble.onrender.com",
-      "https://chat-app-babble.vercel.app",
-    ],
+    origin: allowedOrigins,
     methods: ["GET", "POST"],
     credentials: true,
   },
 });
 
+// ✅ Socket.IO events
 io.on("connection", (socket) => {
-  console.log("Socket connected:", socket.id);
+  console.log("🟢 Socket connected:", socket.id);
 
+  // Setup user
   socket.on("setup", (userData) => {
     socket.join(userData._id);
     socket.userId = userData._id;
     socket.emit("connected");
-    console.log(`User ${userData._id} joined room`);
+    console.log(`User ${userData._id} joined their personal room`);
   });
 
+  // Join chat room
+  socket.on("join chat", (room) => {
+    socket.join(room);
+    console.log(`Socket ${socket.id} joined room: ${room}`);
+  });
+
+  // Typing indicators
   socket.on("typing", (chatId) => {
     socket.in(chatId).emit("typing", chatId);
   });
@@ -85,27 +101,32 @@ io.on("connection", (socket) => {
     socket.in(chatId).emit("stop typing", chatId);
   });
 
-  socket.on("join chat", (room) => {
-    socket.join(room);
-    console.log(`Socket ${socket.id} joined chat room: ${room}`);
-  });
-
+  // New message
   socket.on("new message", (newMessageReceived) => {
     const chat = newMessageReceived.chat;
-    if (!chat.users) return console.error("Chat.users not defined");
+    if (!chat.users) return console.error("❌ Chat.users not defined");
 
-    chat.users.forEach((usr) => {
-      if (usr._id === newMessageReceived.sender._id) return;
-      socket.in(usr._id).emit("message received", newMessageReceived);
+    chat.users.forEach((user) => {
+      if (user._id === newMessageReceived.sender._id) return;
+      socket.in(user._id).emit("message received", newMessageReceived);
     });
   });
 
+  // Disconnect
   socket.on("disconnect", () => {
-    console.log("User disconnected:", socket.userId);
-    socket.leave(socket.userId);
+    console.log("🔴 User disconnected:", socket.userId);
+    if (socket.userId) socket.leave(socket.userId);
+  });
+
+  // Error logging
+  socket.on("error", (err) => {
+    console.error("❌ Socket error:", err);
   });
 });
 
+// Start server
 server.listen(port, () => {
-  console.log(`Server running in ${process.env.NODE_ENV} mode on port ${port}`);
+  console.log(
+    `🚀 Server running in ${process.env.NODE_ENV} mode on port ${port}`
+  );
 });

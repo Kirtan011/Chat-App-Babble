@@ -60,6 +60,7 @@ const Login = () => {
 
       localStorage.setItem("userInfo", JSON.stringify(data));
       history.push("/chats");
+
       // ✅ Immediately redirect after login
     } catch (error) {
       toast({
