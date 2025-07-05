@@ -19,7 +19,11 @@ connectDB();
 app.use(express.json());
 app.use(
   cors({
-    origin: ["http://localhost:3000", "https://chat-app-babble.onrender.com"],
+    origin: [
+      "http://localhost:3000",
+      "https://chat-app-babble.onrender.com",
+      "https://chat-app-babble.vercel.app",
+    ],
     credentials: true,
   })
 );
