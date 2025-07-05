@@ -53,7 +53,11 @@ const server = http.createServer(app);
 // Socket.IO Setup
 const io = new Server(server, {
   cors: {
-    origin: ["http://localhost:3000", "https://chat-app-babble.onrender.com"],
+    origin: [
+      "http://localhost:3000",
+      "https://chat-app-babble.onrender.com",
+      "https://chat-app-babble.vercel.app",
+    ],
     methods: ["GET", "POST"],
     credentials: true,
   },
