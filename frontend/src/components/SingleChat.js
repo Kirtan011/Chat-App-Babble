@@ -50,6 +50,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
     if (!user) return;
 
     socket = io(ENDPOINT, {
+      path: "/socket.io",
       transports: ["websocket", "polling"],
       withCredentials: true,
     });

@@ -64,10 +64,10 @@ app.use(errorHandler);
 
 // Start HTTP server and bind Socket.IO
 const server = http.createServer(app);
-server.on("request", app);
 
-const io = new Server(port, {
+const io = new Server(server, {
   pingTimeout: 60000,
+  path: "/socket.io",
   cors: {
     origin: allowedOrigins,
     methods: ["GET", "POST"],
