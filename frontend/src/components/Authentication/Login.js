@@ -8,10 +8,13 @@ import {
   InputRightElement,
   Button,
   useToast,
+  Text,
+  Box,
 } from "@chakra-ui/react";
 import axios from "axios";
 import { useHistory } from "react-router-dom";
 import api from "../../config/axios";
+import FirebaseLogin from "./firebaseLogin";
 
 const Login = () => {
   const [show, setShow] = useState(false);
@@ -85,6 +88,7 @@ const Login = () => {
           type="email"
           placeholder="Enter your email"
           value={email}
+          autoComplete="new-email"
           onChange={(e) => setEmail(e.target.value)}
         />
       </FormControl>
@@ -96,6 +100,7 @@ const Login = () => {
             type={show ? "text" : "password"}
             placeholder="Enter your password"
             value={password}
+            autoComplete="new-password"
             onChange={(e) => setPassword(e.target.value)}
           />
           <InputRightElement width="4.5rem">
@@ -107,6 +112,7 @@ const Login = () => {
       </FormControl>
 
       <Button
+        mt={4}
         colorScheme="blue"
         width="100%"
         onClick={submitHandler}
@@ -114,7 +120,6 @@ const Login = () => {
       >
         Login
       </Button>
-
       <Button
         colorScheme="red"
         width="100%"
@@ -126,6 +131,13 @@ const Login = () => {
       >
         Get Guest User Credentials
       </Button>
+
+      <Box>
+        <Text mt={8} mb={6} color="blackAlpha.500">
+          <i>Sign-up or Log-in with Google Account</i>
+        </Text>
+        <FirebaseLogin />
+      </Box>
     </VStack>
   );
 };

@@ -67,8 +67,39 @@ const authUser = asyncHandler(async (req, res) => {
   }
 });
 
-//All Users:
+//Google-Login
 
+const googleLogin = asyncHandler(async (req, res) => {
+  const { name, email, pic, id } = req.body;
+
+  console.log("Google Login Payload:", req.body);
+
+  if (!email || !id) {
+    res.status(400);
+    throw new Error("Invalid Google login data — email or ID missing");
+  }
+
+  let user = await User.findOne({ email: email.toLowerCase() });
+
+  if (!user) {
+    user = await User.create({
+      name,
+      email: email.toLowerCase(),
+      pic,
+      googleId: id,
+    });
+  }
+
+  res.status(200).json({
+    _id: user._id,
+    name: user.name,
+    email: user.email,
+    pic: user.pic,
+    token: generateToken(user._id),
+  });
+});
+
+//All Users:
 const allUsers = asyncHandler(async (req, res) => {
   const keyword = req.query.searchedUser
     ? {
@@ -83,4 +114,4 @@ const allUsers = asyncHandler(async (req, res) => {
   res.send(users);
 });
 
-export { registerUser, authUser, allUsers };
+export { registerUser, authUser, allUsers, googleLogin };
