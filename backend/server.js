@@ -64,8 +64,9 @@ app.use(errorHandler);
 
 // Start HTTP server and bind Socket.IO
 const server = http.createServer(app);
+server.on("request", app);
 
-const io = new Server(server, {
+const io = new Server(port, {
   pingTimeout: 60000,
   cors: {
     origin: allowedOrigins,
