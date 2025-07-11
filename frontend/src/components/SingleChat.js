@@ -49,7 +49,11 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
   useEffect(() => {
     if (!user) return;
 
-    socket = io(ENDPOINT);
+    socket = io(ENDPOINT, {
+      transports: ["websocket", "polling"],
+      withCredentials: true,
+    });
+
     socket.emit("setup", user);
     socket.on("connected", () => setSocketConnected(true));
 
