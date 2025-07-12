@@ -24,7 +24,7 @@ import api from "../config/axios";
 
 const ENDPOINT =
   process.env.NODE_ENV === "production"
-    ? "https://chat-app-babble.onrender.com"
+    ? "https://chat-app-backend-fs2e.onrender.com"
     : "http://localhost:5000";
 
 let socket;
