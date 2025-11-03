@@ -15,6 +15,7 @@ import {
   Spinner,
   Box,
   Text,
+  useColorModeValue,
 } from "@chakra-ui/react";
 import { ChatState } from "../../context/ChatProvider";
 import UserListItem from "../UserAvatar/UserListItem";
@@ -31,7 +32,6 @@ const GroupChatModal = ({ children }) => {
 
   const toast = useToast();
   const { user, chats, setChats } = ChatState();
-
   useEffect(() => {
     if (isOpen) {
       setGroupChatName("");
@@ -127,6 +127,10 @@ const GroupChatModal = ({ children }) => {
     setSelectedUsers(selectedUsers.filter((u) => u._id !== userToDelete._id));
   };
 
+  const bg = useColorModeValue("white", "gray.800");
+  const headerBg = useColorModeValue("blue.50", "gray.700");
+  const borderColor = useColorModeValue("gray.200", "gray.600");
+
   return (
     <>
       <span onClick={onOpen}>{children}</span>
@@ -137,20 +141,38 @@ const GroupChatModal = ({ children }) => {
         size="lg"
         scrollBehavior="inside"
       >
-        <ModalOverlay />
-        <ModalContent borderRadius="2xl" boxShadow="lg">
-          <ModalHeader textAlign="center" fontSize="2xl" fontWeight="bold">
+        <ModalOverlay bg="blackAlpha.400" backdropFilter="blur(6px)" />
+        <ModalContent
+          borderRadius="2xl"
+          bg={bg}
+          border={`1px solid ${borderColor}`}
+          boxShadow="2xl"
+          transition="all 0.3s ease"
+        >
+          <ModalHeader
+            bg={headerBg}
+            borderTopRadius="2xl"
+            textAlign="center"
+            fontSize="2xl"
+            fontWeight="bold"
+          >
             Create Group Chat
           </ModalHeader>
           <ModalCloseButton />
 
-          <ModalBody display="flex" flexDirection="column" gap={4}>
+          <ModalBody display="flex" flexDirection="column" gap={4} p={5}>
             <FormControl>
               <Input
-                placeholder="Group name"
+                placeholder="Enter group name"
                 value={groupChatName}
                 onChange={(e) => setGroupChatName(e.target.value)}
                 borderRadius="xl"
+                border="1px solid"
+                borderColor={borderColor}
+                _focus={{
+                  borderColor: "blue.400",
+                  boxShadow: "0 0 0 1px blue.300",
+                }}
               />
             </FormControl>
 
@@ -159,6 +181,12 @@ const GroupChatModal = ({ children }) => {
                 placeholder="Add users (e.g. John, Alice...)"
                 onChange={(e) => handleSearch(e.target.value)}
                 borderRadius="xl"
+                border="1px solid"
+                borderColor={borderColor}
+                _focus={{
+                  borderColor: "blue.400",
+                  boxShadow: "0 0 0 1px blue.300",
+                }}
               />
             </FormControl>
 
@@ -201,7 +229,7 @@ const GroupChatModal = ({ children }) => {
             </Box>
           </ModalBody>
 
-          <ModalFooter>
+          <ModalFooter bg={headerBg} borderBottomRadius="2xl">
             <Button
               colorScheme="blue"
               onClick={handleSubmit}

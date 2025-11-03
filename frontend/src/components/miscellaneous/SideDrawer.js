@@ -1,6 +1,5 @@
 import { useState } from "react";
 import {
-  Box,
   Tooltip,
   Button,
   Text,
@@ -20,16 +19,16 @@ import {
   Spinner,
   Flex,
   useToast,
+  Badge,
 } from "@chakra-ui/react";
-import { BellIcon, ChevronDownIcon } from "@chakra-ui/icons";
+import { BellIcon, ChevronDownIcon, Search2Icon } from "@chakra-ui/icons";
 import { ChatState } from "../../context/ChatProvider";
 import ProfileModal from "./ProfileModal";
 import { useHistory } from "react-router-dom";
-import axios from "axios";
-import ChatLoading from "../ChatLoading.js";
-import UserListItem from "../UserAvatar/UserListItem.js";
-import { getSender } from "../config/ChatLogics.js";
-import api from "../../config/axios.js";
+import ChatLoading from "../ChatLoading";
+import UserListItem from "../UserAvatar/UserListItem";
+import { getSender } from "../config/ChatLogics";
+import api from "../../config/axios";
 
 const SideDrawer = () => {
   const [search, setSearch] = useState("");
@@ -45,6 +44,7 @@ const SideDrawer = () => {
     notification,
     setNotification,
   } = ChatState();
+
   const history = useHistory();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const toast = useToast();
@@ -56,11 +56,11 @@ const SideDrawer = () => {
   };
 
   const handleSearch = async () => {
-    if (!search) {
+    if (!search.trim()) {
       toast({
-        title: "Please enter something in search",
+        title: "Enter a name or email to search",
         status: "warning",
-        duration: 1000,
+        duration: 1200,
         isClosable: true,
         position: "top-left",
       });
@@ -69,17 +69,13 @@ const SideDrawer = () => {
 
     try {
       setLoading(true);
-      const config = {
-        headers: {
-          Authorization: `Bearer ${user.token}`,
-        },
-      };
-      const { data } = await api.get(`/api/user?search=${search}`, config);
+      const { data } = await api.get(`/api/user?search=${search}`, {
+        headers: { Authorization: `Bearer ${user.token}` },
+      });
       setSearchResult(data);
-    } catch (error) {
+    } catch {
       toast({
-        title: "Error occurred!",
-        description: "Failed to load search results",
+        title: "Failed to fetch users",
         status: "error",
         duration: 1500,
         isClosable: true,
@@ -93,20 +89,22 @@ const SideDrawer = () => {
   const accessChat = async (userId) => {
     try {
       setLoadingChat(true);
-      const config = {
-        headers: {
-          "Content-type": "application/json",
-          Authorization: `Bearer ${user.token}`,
-        },
-      };
-      const { data } = await api.post("/api/chat", { userId }, config);
-
+      const { data } = await api.post(
+        "/api/chat",
+        { userId },
+        {
+          headers: {
+            "Content-type": "application/json",
+            Authorization: `Bearer ${user.token}`,
+          },
+        }
+      );
       if (!chats.find((c) => c._id === data._id)) setChats([data, ...chats]);
       setSelectedChat(data);
       onClose();
-    } catch (error) {
+    } catch {
       toast({
-        title: "Error fetching chat",
+        title: "Error opening chat",
         status: "error",
         duration: 2000,
         isClosable: true,
@@ -122,123 +120,154 @@ const SideDrawer = () => {
       <Flex
         justifyContent="space-between"
         alignItems="center"
-        bg="white"
+        backdropFilter="blur(12px)"
+        bg="rgba(255, 255, 255, 0.6)"
+        borderBottom="1px solid"
+        borderColor="gray.200"
         w="100%"
-        p="8px 12px"
-        borderBottom="2px solid"
-        borderColor="gray.100"
-        shadow="md"
+        p={{ base: 2, md: 3 }}
+        px={{ base: 3, md: 5 }}
+        boxShadow="0 2px 10px rgba(0,0,0,0.05)"
+        position="sticky"
+        top={0}
+        zIndex={999}
       >
         <Tooltip label="Search Users" hasArrow placement="bottom-start">
           <Button
-            variant="ghost"
             onClick={onOpen}
+            variant="ghost"
             borderRadius="full"
-            _hover={{ bg: "gray.100" }}
-            p={2}
-            display="flex"
-            alignItems="center"
-            justifyContent="center"
+            leftIcon={<Search2Icon />}
+            colorScheme="blue"
+            fontWeight="medium"
+            _hover={{ bg: "blue.50" }}
           >
-            <Text fontSize={{ base: "lg", md: "md" }}>🔎</Text>
-            <Text
-              ml={2}
-              display={{ base: "none", sm: "none", md: "inline" }}
-              fontWeight="semibold"
-            >
-              Search User
-            </Text>
+            <Text display={{ base: "none", md: "inline" }}>Search</Text>
           </Button>
         </Tooltip>
 
         <Text
-          fontSize="3xl"
+          fontSize={{ base: "2xl", md: "3xl" }}
           fontWeight="bold"
           fontFamily="Baloo 2"
           bgGradient="linear(to-r, teal.400, blue.500)"
           bgClip="text"
-          sx={{ WebkitTextFillColor: "transparent" }}
+          letterSpacing="wide"
         >
-          BABBLE
+          Babble
         </Text>
 
-        <Flex gap={2} alignItems="center">
+        <Flex gap={3} alignItems="center">
           <Menu>
-            <MenuButton position="relative">
+            <MenuButton
+              position="relative"
+              transition="0.2s ease"
+              _hover={{ transform: "scale(1.1)" }}
+            >
+              <BellIcon fontSize="2xl" color="gray.700" />
               {notification.length > 0 && (
-                <Box
+                <Badge
                   position="absolute"
                   top="-1"
                   right="-1"
-                  bg="red.500"
-                  color="white"
-                  fontSize="xs"
-                  px="2"
-                  py="0.5"
                   borderRadius="full"
-                  zIndex={1}
+                  px="2"
+                  colorScheme="red"
+                  fontSize="0.7em"
+                  animation="pulse 1.5s infinite"
+                  sx={{
+                    "@keyframes pulse": {
+                      "0%": { transform: "scale(1)", opacity: 1 },
+                      "50%": { transform: "scale(1.3)", opacity: 0.7 },
+                      "100%": { transform: "scale(1)", opacity: 1 },
+                    },
+                  }}
                 >
                   {notification.length}
-                </Box>
+                </Badge>
               )}
-              <BellIcon fontSize="2xl" />
             </MenuButton>
-            <MenuList>
-              {!notification.length && <MenuItem>No new messages</MenuItem>}
+            <MenuList borderRadius="xl" boxShadow="xl" py={2}>
+              {!notification.length && (
+                <MenuItem color="gray.500">No new messages</MenuItem>
+              )}
               {notification.map((notif) => (
                 <MenuItem
                   key={notif._id}
+                  borderRadius="md"
+                  _hover={{ bg: "blue.50" }}
                   onClick={() => {
                     setSelectedChat(notif.chat);
                     setNotification(notification.filter((n) => n !== notif));
                   }}
                 >
                   {notif.chat.isGroupChat
-                    ? `New message in ${notif.chat.chatName}`
-                    : `New message from ${getSender(user, notif.chat.users)}`}
+                    ? `💬 ${notif.chat.chatName}`
+                    : `🗨️ ${getSender(user, notif.chat.users)}`}
                 </MenuItem>
               ))}
             </MenuList>
           </Menu>
 
           <Menu>
-            <MenuButton as={Button} rightIcon={<ChevronDownIcon />} bg="white">
+            <MenuButton
+              as={Button}
+              variant="ghost"
+              rightIcon={<ChevronDownIcon />}
+              borderRadius="full"
+              px={2}
+              _hover={{ bg: "blue.50" }}
+            >
               <Avatar size="sm" name={user.name} src={user.pic} />
             </MenuButton>
-            <MenuList>
+            <MenuList borderRadius="xl" boxShadow="xl">
               <ProfileModal user={user}>
-                <MenuItem>My Profile</MenuItem>
+                <MenuItem fontWeight="500">My Profile</MenuItem>
               </ProfileModal>
               <MenuDivider />
-              <MenuItem onClick={logOutHandler}>Logout</MenuItem>
+              <MenuItem color="red.500" onClick={logOutHandler}>
+                Logout
+              </MenuItem>
             </MenuList>
           </Menu>
         </Flex>
       </Flex>
 
-      <Drawer
-        placement="left"
-        onClose={onClose}
-        isOpen={isOpen}
-        size={{ base: "xs", md: "sm" }}
-      >
+      <Drawer placement="left" onClose={onClose} isOpen={isOpen} size="sm">
         <DrawerOverlay />
-        <DrawerContent borderRadius="md">
-          <DrawerHeader borderBottomWidth="1px" textAlign="center">
-            Search Users
+        <DrawerContent
+          bg="whiteAlpha.900"
+          borderRadius={{ base: "none", md: "xl" }}
+          mt={{ base: 0, md: 6 }}
+          mb={{ base: 0, md: 6 }}
+          mx={{ base: 0, md: 4 }}
+          boxShadow="2xl"
+        >
+          <DrawerHeader
+            borderBottomWidth="1px"
+            textAlign="center"
+            fontSize="xl"
+            fontWeight="bold"
+            color="blue.600"
+          >
+            🔍 Search Users
           </DrawerHeader>
+
           <DrawerBody>
-            <Flex pb={3} gap={2}>
+            <Flex pb={3} gap={2} alignItems="center">
               <Input
                 placeholder="Search by name or email"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                borderRadius="lg"
+                borderRadius="full"
+                focusBorderColor="blue.400"
               />
               <Button
                 onClick={handleSearch}
                 colorScheme="blue"
-                borderRadius="lg"
+                borderRadius="full"
+                px={6}
+                _hover={{ bg: "blue.500" }}
               >
                 Go
               </Button>
@@ -256,7 +285,9 @@ const SideDrawer = () => {
               ))
             )}
 
-            {loadingChat && <Spinner ml="auto" display="block" />}
+            {loadingChat && (
+              <Spinner size="lg" mt={3} display="block" mx="auto" />
+            )}
           </DrawerBody>
         </DrawerContent>
       </Drawer>

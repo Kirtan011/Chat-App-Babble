@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { ChatState } from "../context/ChatProvider";
 import {
   Avatar,
@@ -9,9 +9,11 @@ import {
   Text,
   useToast,
   VStack,
+  InputGroup,
+  Input,
+  InputLeftElement,
 } from "@chakra-ui/react";
-import axios from "axios";
-import { AddIcon } from "@chakra-ui/icons";
+import { AddIcon, SearchIcon } from "@chakra-ui/icons";
 import ChatLoading from "./ChatLoading";
 import { getSenderFull } from "./config/ChatLogics";
 import GroupChatModal from "./miscellaneous/GroupChatModal";
@@ -21,6 +23,7 @@ import api from "../config/axios";
 const MyChats = ({ fetchAgain }) => {
   const { user, selectedChat, setSelectedChat, chats, setChats } = ChatState();
   const toast = useToast();
+  const [searchTerm, setSearchTerm] = useState("");
 
   const fetchChat = async () => {
     try {
@@ -49,110 +52,177 @@ const MyChats = ({ fetchAgain }) => {
     }
   }, [fetchAgain, user]);
 
+  // Filter chats dynamically based on search term
+  const filteredChats = chats?.filter((chat) => {
+    if (chat.isGroupChat) {
+      return chat.chatName.toLowerCase().includes(searchTerm.toLowerCase());
+    }
+    const displayUser = getSenderFull(user, chat.users);
+    return displayUser?.name.toLowerCase().includes(searchTerm.toLowerCase());
+  });
+
   return (
     <Box
       display={{ base: selectedChat ? "none" : "flex", md: "flex" }}
       flexDir="column"
       alignItems="center"
-      p={3}
-      bg="white"
-      w={{ base: "100%", md: "31%" }}
-      borderRadius="30px"
-      borderWidth="3px"
-      transition="all 0.3s cubic-bezier(0.4, 0, 0.2, 1)"
-      boxShadow="12px 12px 8px rgba(0, 0, 0, 0.15)"
-      _hover={{
-        boxShadow: "12px 12px 12px rgba(0, 0, 0, 0.15)",
-        transform: "scale(1.005)",
-      }}
+      p={4}
+      bg="rgba(255, 255, 255, 0.6)"
+      backdropFilter="blur(20px)"
+      w={{ base: "100%", md: "32%" }}
+      borderRadius="28px"
+      border="1px solid rgba(255,255,255,0.3)"
+      boxShadow="0 8px 24px rgba(0,0,0,0.15)"
+      transition="all 0.3s ease-in-out"
     >
+      {/* Header */}
       <Box
         display="flex"
         justifyContent="space-between"
         alignItems="center"
         p={3}
-        fontSize={{ base: "28px", md: "31px" }}
-        fontFamily="Work sans"
+        fontSize={{ base: "24px", md: "28px" }}
+        fontFamily="Poppins, sans-serif"
         w="100%"
+        fontWeight="600"
+        color="gray.800"
       >
-        My Chats
+        Chats
         <GroupChatModal>
           <Button
-            display="flex"
-            borderRadius="24px"
-            fontSize={{ base: "17px", md: "10px", lg: "17px" }}
+            bgGradient="linear(to-r, teal.400, blue.400)"
+            color="white"
+            borderRadius="lg"
+            fontWeight="500"
+            fontSize={{ base: "14px", md: "16px" }}
             rightIcon={<AddIcon />}
+            _hover={{
+              transform: "scale(1.05)",
+              boxShadow: "0 0 12px rgba(56,189,248,0.5)",
+            }}
           >
-            New Group Chat
+            New Group
           </Button>
         </GroupChatModal>
       </Box>
 
+      {/* Search Bar */}
+      <InputGroup
+        w="100%"
+        mb={3}
+        mt={1}
+        bg="whiteAlpha.700"
+        borderRadius="lg"
+        shadow="sm"
+      >
+        <InputLeftElement pointerEvents="none">
+          <SearchIcon color="gray.400" />
+        </InputLeftElement>
+        <Input
+          placeholder="Search chats..."
+          border="none"
+          focusBorderColor="blue.300"
+          _placeholder={{ color: "gray.500" }}
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
+      </InputGroup>
+
+      {/* Chat list */}
       <Box
         display="flex"
         flexDir="column"
         p={3}
-        bg="#F8F8F8"
+        bg="rgba(255,255,255,0.5)"
+        backdropFilter="blur(12px)"
         w="100%"
         h="100%"
-        borderRadius="lg"
-        overflow="hidden"
+        borderRadius="xl"
+        overflowY="auto"
+        css={{
+          "&::-webkit-scrollbar": { width: "5px" },
+          "&::-webkit-scrollbar-thumb": {
+            backgroundColor: "#a0aec0",
+            borderRadius: "5px",
+          },
+        }}
       >
         {chats ? (
-          <Stack spacing={3} overflowY="scroll" px={1}>
-            {chats.map((chat) => {
-              const isSelected = selectedChat?._id === chat._id;
-              const displayUser = getSenderFull(user, chat.users);
-              const lastActive = chat.latestMessage?.updatedAt;
+          <Stack spacing={3}>
+            {filteredChats.length > 0 ? (
+              filteredChats.map((chat) => {
+                const isSelected = selectedChat?._id === chat._id;
+                const displayUser = getSenderFull(user, chat.users);
+                const lastMsg =
+                  chat.latestMessage?.content || "No messages yet";
+                const lastActive = chat.latestMessage?.updatedAt;
 
-              return (
-                <Box
-                  key={chat._id}
-                  onClick={() => setSelectedChat(chat)}
-                  cursor="pointer"
-                  px={4}
-                  py={3}
-                  borderRadius="xl"
-                  bg={isSelected ? "blue.200" : "gray.200"}
-                  color={isSelected ? "white" : "black"}
-                  boxShadow={isSelected ? "lg" : "sm"}
-                  _hover={{
-                    transform: "scale(1.01)",
-                    boxShadow: "md",
-                    transition: "all 0.2s ease-in-out",
-                  }}
-                  transition="all 0.2s"
-                >
-                  <HStack
-                    spacing={3}
-                    align="center"
-                    justifyContent="space-between"
+                return (
+                  <Box
+                    key={chat._id}
+                    onClick={() => setSelectedChat(chat)}
+                    cursor="pointer"
+                    p={3}
+                    borderRadius="lg"
+                    bg={
+                      isSelected
+                        ? "linear-gradient(90deg, #63b3ed, #3182ce)"
+                        : "whiteAlpha.700"
+                    }
+                    color={isSelected ? "white" : "gray.800"}
+                    boxShadow={
+                      isSelected ? "0 4px 12px rgba(66,153,225,0.5)" : "sm"
+                    }
+                    _hover={{
+                      transform: "scale(1.02)",
+                      boxShadow: "md",
+                      transition: "0.2s",
+                    }}
+                    transition="all 0.2s ease-in-out"
                   >
-                    <HStack spacing={3}>
-                      <Avatar
-                        size="md"
-                        name={
-                          chat.isGroupChat ? chat.chatName : displayUser?.name
-                        }
-                        src={!chat.isGroupChat ? displayUser?.pic : undefined}
-                      />
-                      <Text
-                        fontSize={{ base: "md", md: "lg" }}
-                        fontWeight="bold"
-                        color="gray.700"
-                      >
-                        {chat.isGroupChat ? chat.chatName : displayUser?.name}
-                      </Text>
+                    <HStack justify="space-between" align="center">
+                      <HStack spacing={3}>
+                        <Avatar
+                          size="md"
+                          name={
+                            chat.isGroupChat ? chat.chatName : displayUser?.name
+                          }
+                          src={!chat.isGroupChat ? displayUser?.pic : undefined}
+                          border={
+                            isSelected
+                              ? "2px solid white"
+                              : "2px solid transparent"
+                          }
+                        />
+                        <VStack align="start" spacing={0}>
+                          <Text
+                            fontWeight="semibold"
+                            fontSize="md"
+                            noOfLines={1}
+                          >
+                            {chat.isGroupChat
+                              ? chat.chatName
+                              : displayUser?.name}
+                          </Text>
+                          <Text fontSize="sm" opacity={0.8} noOfLines={1}>
+                            {lastMsg}
+                          </Text>
+                        </VStack>
+                      </HStack>
+                      {lastActive && (
+                        <Text fontSize="xs" opacity={0.6}>
+                          {moment(lastActive).fromNow()}
+                        </Text>
+                      )}
                     </HStack>
-                    {lastActive && (
-                      <Text fontSize="xs" color="gray.500" whiteSpace="nowrap">
-                        {moment(lastActive).fromNow()}
-                      </Text>
-                    )}
-                  </HStack>
-                </Box>
-              );
-            })}
+                  </Box>
+                );
+              })
+            ) : (
+              <Text textAlign="center" color="gray.500">
+                No chats found
+              </Text>
+            )}
           </Stack>
         ) : (
           <ChatLoading />
