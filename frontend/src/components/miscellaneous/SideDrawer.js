@@ -120,17 +120,18 @@ const SideDrawer = () => {
       <Flex
         justifyContent="space-between"
         alignItems="center"
-        backdropFilter="blur(12px)"
-        bg="rgba(255, 255, 255, 0.6)"
-        borderBottom="1px solid"
-        borderColor="gray.200"
-        w="100%"
-        p={{ base: 2, md: 3 }}
+        bg="white"
+        border="3px solid"
+        borderColor="gray.300"
+        w={{ base: "95%", md: "75%" }}
+        mx="auto"
+        mt="1"
+        p={{ base: 2, md: 2 }}
         px={{ base: 3, md: 5 }}
-        boxShadow="0 2px 10px rgba(0,0,0,0.05)"
         position="sticky"
         top={0}
         zIndex={999}
+        borderRadius="100px"
       >
         <Tooltip label="Search Users" hasArrow placement="bottom-start">
           <Button
@@ -150,7 +151,7 @@ const SideDrawer = () => {
           fontSize={{ base: "2xl", md: "3xl" }}
           fontWeight="bold"
           fontFamily="Baloo 2"
-          bgGradient="linear(to-r, teal.400, blue.500)"
+          bgGradient="linear(to-r, teal.500, blue.500)"
           bgClip="text"
           letterSpacing="wide"
         >
