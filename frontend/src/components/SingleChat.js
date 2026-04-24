@@ -43,8 +43,15 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
   const lastTypingTimeRef = useRef(null);
 
   const toast = useToast();
-  const { user, selectedChat, setSelectedChat, notification, setNotification } =
-    ChatState();
+  const {
+    user,
+    selectedChat,
+    setSelectedChat,
+    notification,
+    setNotification,
+    chats,
+    setChats,
+  } = ChatState();
 
   useEffect(() => {
     if (!user) return;
@@ -70,10 +77,34 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
       }
     });
 
+    socket.on("user status changed", ({ userId, isOnline }) => {
+      setChats((prevChats) =>
+        prevChats.map((c) => ({
+          ...c,
+          users: c.users.map((u) =>
+            u._id === userId ? { ...u, isOnline } : u
+          ),
+        }))
+      );
+
+      if (selectedChatCompare) {
+        setSelectedChat((prevSelected) => {
+          if (!prevSelected) return prevSelected;
+          return {
+            ...prevSelected,
+            users: prevSelected.users.map((u) =>
+              u._id === userId ? { ...u, isOnline } : u
+            ),
+          };
+        });
+      }
+    });
+
     return () => {
       socket.off("connected");
       socket.off("typing");
       socket.off("stop typing");
+      socket.off("user status changed");
     };
   }, [user]);
 
@@ -244,7 +275,12 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
 
             {!selectedChat.isGroupChat ? (
               <>
-                <Text>{getSender(user, selectedChat.users)}</Text>
+                <Box display="flex" flexDir="column">
+                  <Text>{getSender(user, selectedChat.users)}</Text>
+                  <Text fontSize="xs" fontWeight="normal" color={getSenderFull(user, selectedChat.users).isOnline ? "green.500" : "gray.500"}>
+                    {getSenderFull(user, selectedChat.users).isOnline ? "Online" : "Offline"}
+                  </Text>
+                </Box>
                 <ProfileModal user={getSenderFull(user, selectedChat.users)} />
               </>
             ) : (
