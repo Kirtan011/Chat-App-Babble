@@ -10,6 +10,7 @@ import userRoutes from "./routes/userRoutes.js";
 import chatRoutes from "./routes/chatRoutes.js";
 import messageRoutes from "./routes/messageRoutes.js";
 import { notFound, errorHandler } from "./middleware/errorMiddleware.js";
+import User from "./Models/userModel.js";
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -80,11 +81,22 @@ io.on("connection", (socket) => {
   console.log("🟢 Socket connected:", socket.id);
 
   // Setup user
-  socket.on("setup", (userData) => {
+  socket.on("setup", async (userData) => {
     socket.join(userData._id);
     socket.userId = userData._id;
     socket.emit("connected");
     console.log(`User ${userData._id} joined their personal room`);
+
+    // Update status to online
+    try {
+      await User.findByIdAndUpdate(userData._id, { isOnline: true });
+      socket.broadcast.emit("user status changed", {
+        userId: userData._id,
+        isOnline: true,
+      });
+    } catch (error) {
+      console.error("Error updating user status:", error);
+    }
   });
 
   // Join chat room
@@ -114,9 +126,20 @@ io.on("connection", (socket) => {
   });
 
   // Disconnect
-  socket.on("disconnect", () => {
+  socket.on("disconnect", async () => {
     console.log("🔴 User disconnected:", socket.userId);
-    if (socket.userId) socket.leave(socket.userId);
+    if (socket.userId) {
+      try {
+        await User.findByIdAndUpdate(socket.userId, { isOnline: false });
+        socket.broadcast.emit("user status changed", {
+          userId: socket.userId,
+          isOnline: false,
+        });
+      } catch (error) {
+        console.error("Error updating user status on disconnect:", error);
+      }
+      socket.leave(socket.userId);
+    }
   });
 
   // Error logging
