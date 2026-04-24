@@ -12,6 +12,7 @@ import {
   InputGroup,
   Input,
   InputLeftElement,
+  AvatarBadge,
 } from "@chakra-ui/react";
 import { AddIcon, SearchIcon } from "@chakra-ui/icons";
 import ChatLoading from "./ChatLoading";
@@ -193,7 +194,11 @@ const MyChats = ({ fetchAgain }) => {
                               ? "2px solid white"
                               : "2px solid transparent"
                           }
-                        />
+                        >
+                          {!chat.isGroupChat && displayUser?.isOnline && (
+                            <AvatarBadge boxSize="1em" bg="green.500" />
+                          )}
+                        </Avatar>
                         <VStack align="start" spacing={0}>
                           <Text
                             fontWeight="semibold"
