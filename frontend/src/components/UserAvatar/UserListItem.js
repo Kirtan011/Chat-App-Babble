@@ -1,4 +1,4 @@
-import { Box, Avatar, Text } from "@chakra-ui/react";
+import { Box, Avatar, Text, AvatarBadge } from "@chakra-ui/react";
 import React from "react";
 
 const UserListItem = ({ user, handleFunction }) => {
@@ -29,7 +29,9 @@ const UserListItem = ({ user, handleFunction }) => {
         size="lg"
         name={user.name}
         src={user.pic}
-      />
+      >
+        {user.isOnline && <AvatarBadge boxSize="1.25em" bg="green.500" />}
+      </Avatar>
       <Box>
         <Text
           fontSize={{ base: "sm", md: "lg" }}
