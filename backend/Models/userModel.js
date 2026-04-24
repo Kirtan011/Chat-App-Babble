@@ -11,6 +11,7 @@ const userSchema = new mongoose.Schema(
         "https://icon-library.com/images/anonymous-avatar-icon/anonymous-avatar-icon-25.jpg",
     },
     googleId: { type: String },
+    isOnline: { type: Boolean, default: false },
   },
   {
     timestamps: true,
