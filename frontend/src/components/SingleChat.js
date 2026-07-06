@@ -15,7 +15,7 @@ import { ArrowBackIcon, ArrowForwardIcon } from "@chakra-ui/icons";
 import { getSender, getSenderFull } from "./config/ChatLogics";
 import ProfileModal from "./miscellaneous/ProfileModal";
 import UpdateGroupChatModal from "./miscellaneous/UpdateGroupChatModal";
-import axios from "axios";
+
 import ScrollableChat from "./ScrollableChat";
 import io from "socket.io-client";
 import Lottie from "lottie-react";
@@ -49,7 +49,6 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
     setSelectedChat,
     notification,
     setNotification,
-    chats,
     setChats,
   } = ChatState();
 
@@ -105,6 +104,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
     return () => {
       socketInstance.disconnect();
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
   useEffect(() => {
@@ -114,6 +114,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
     fetchMessages();
     socket.emit("stop typing", selectedChat._id);
     setIsTyping(false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedChat]);
 
   useEffect(() => {
@@ -176,6 +177,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
     return () => {
       socket.off("message received", messageHandler);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [notification, fetchAgain]);
 
   const sendMessage = async (event) => {

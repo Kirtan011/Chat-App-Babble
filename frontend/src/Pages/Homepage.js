@@ -21,6 +21,7 @@ const Homepage = () => {
     if (user) {
       history.push("/chats");
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

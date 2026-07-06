@@ -1,4 +1,4 @@
-import { InputGroup, InputRightElement, VStack } from "@chakra-ui/react";
+import { InputGroup, InputRightElement, VStack, Box, Text } from "@chakra-ui/react";
 import { FormControl, FormLabel, Input, Button } from "@chakra-ui/react";
 import { useState } from "react";
 import { useToast } from "@chakra-ui/react";

@@ -51,6 +51,7 @@ const MyChats = ({ fetchAgain }) => {
     if (user) {
       fetchChat();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fetchAgain, user]);
 
   // Filter chats dynamically based on search term
