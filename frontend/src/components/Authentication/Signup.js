@@ -88,17 +88,7 @@ const Signup = () => {
       return;
     }
 
-    if (!pic) {
-      toast({
-        title: "Please wait for the image to upload.",
-        status: "warning",
-        duration: 5000,
-        isClosable: true,
-        position: "bottom",
-      });
-      setLoading(false);
-      return;
-    }
+    // Profile picture is optional. If not uploaded, backend uses default avatar.
 
     try {
       const config = {
@@ -189,8 +179,8 @@ const Signup = () => {
         </InputGroup>
       </FormControl>
 
-      <FormControl id="pic" isRequired>
-        <FormLabel mt="2"> Upload Your Picture </FormLabel>
+      <FormControl id="pic">
+        <FormLabel mt="2"> Upload Your Picture (Optional) </FormLabel>
         <Input
           type="file"
           p={1}

@@ -69,7 +69,7 @@ const SideDrawer = () => {
 
     try {
       setLoading(true);
-      const { data } = await api.get(`/api/user?search=${search}`, {
+      const { data } = await api.get(`/api/user?searchedUser=${search}`, {
         headers: { Authorization: `Bearer ${user.token}` },
       });
       setSearchResult(data);

@@ -24,6 +24,11 @@ app.use(express.json());
 // ✅ CORRECT CORS: Allow only frontend origins (not your own backend URL)
 const allowedOrigins = [
   "http://localhost:3000", // dev
+  "http://localhost:3001",
+  "http://localhost:3002",
+  "http://localhost:3003",
+  "http://localhost:3004",
+  "http://localhost:3005",
   "https://chat-app-babble.vercel.app", // deployed frontend
 ];
 
@@ -47,7 +52,9 @@ app.get("/api/user/health-check", (req, res) => {
 // Production (serve frontend if hosted together — optional if Vercel handles it)
 const __dirnameResolved = path.resolve();
 if (process.env.NODE_ENV === "production") {
-  const frontendPath = path.join(__dirnameResolved, "../frontend/build");
+  const frontendPath = __dirnameResolved.endsWith("backend")
+    ? path.join(__dirnameResolved, "../frontend/build")
+    : path.join(__dirnameResolved, "frontend/build");
   app.use(express.static(frontendPath));
 
   app.get("*", (req, res) => {

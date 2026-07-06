@@ -56,28 +56,30 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
   useEffect(() => {
     if (!user) return;
 
-    socket = io(ENDPOINT, {
+    const socketInstance = io(ENDPOINT, {
       path: "/socket.io",
       transports: ["websocket", "polling"],
       withCredentials: true,
     });
 
-    socket.emit("setup", user);
-    socket.on("connected", () => setSocketConnected(true));
+    socket = socketInstance;
 
-    socket.on("typing", (chatId) => {
+    socketInstance.emit("setup", user);
+    socketInstance.on("connected", () => setSocketConnected(true));
+
+    socketInstance.on("typing", (chatId) => {
       if (selectedChatCompare && selectedChatCompare._id === chatId) {
         setIsTyping(true);
       }
     });
 
-    socket.on("stop typing", (chatId) => {
+    socketInstance.on("stop typing", (chatId) => {
       if (selectedChatCompare && selectedChatCompare._id === chatId) {
         setIsTyping(false);
       }
     });
 
-    socket.on("user status changed", ({ userId, isOnline }) => {
+    socketInstance.on("user status changed", ({ userId, isOnline }) => {
       setChats((prevChats) =>
         prevChats.map((c) => ({
           ...c,
@@ -101,10 +103,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
     });
 
     return () => {
-      socket.off("connected");
-      socket.off("typing");
-      socket.off("stop typing");
-      socket.off("user status changed");
+      socketInstance.disconnect();
     };
   }, [user]);
 

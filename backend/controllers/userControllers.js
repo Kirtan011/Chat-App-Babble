@@ -101,11 +101,12 @@ const googleLogin = asyncHandler(async (req, res) => {
 
 //All Users:
 const allUsers = asyncHandler(async (req, res) => {
-  const keyword = req.query.searchedUser
+  const searchKeyword = req.query.searchedUser || req.query.search;
+  const keyword = searchKeyword
     ? {
         $or: [
-          { name: { $regex: req.query.searchedUser, $options: "i" } },
-          { email: { $regex: req.query.searchedUser, $options: "i" } },
+          { name: { $regex: searchKeyword, $options: "i" } },
+          { email: { $regex: searchKeyword, $options: "i" } },
         ],
       }
     : {};

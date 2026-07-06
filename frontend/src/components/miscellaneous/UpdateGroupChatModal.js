@@ -129,7 +129,7 @@ const UpdateGroupChatModal = ({ fetchAgain, setFetchAgain, fetchMessages }) => {
 
   const handleRemove = async (userToRemove) => {
     if (
-      selectedChat.groupAdmin._id !== user._id &&
+      selectedChat.groupAdmin?._id !== user._id &&
       userToRemove._id !== user._id
     ) {
       return toast({

@@ -79,6 +79,44 @@ const Login = () => {
     setLoading(false);
   };
 
+  const handleGuestLogin = async () => {
+    setLoading(true);
+    try {
+      const config = {
+        headers: {
+          "Content-type": "application/json",
+        },
+      };
+
+      const { data } = await api.post(
+        "/api/user/login",
+        { email: "guest@example.com", password: "123456" },
+        config
+      );
+
+      toast({
+        title: "Guest Login Successful!",
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+        position: "bottom",
+      });
+
+      localStorage.setItem("userInfo", JSON.stringify(data));
+      history.push("/chats");
+    } catch (error) {
+      toast({
+        title: "Login Failed",
+        description: error.response?.data?.message || "Something went wrong",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+        position: "bottom",
+      });
+    }
+    setLoading(false);
+  };
+
   return (
     <VStack spacing="5px">
       <FormControl id="login-email" isRequired>
@@ -124,12 +162,10 @@ const Login = () => {
         colorScheme="red"
         width="100%"
         mt="15px"
-        onClick={() => {
-          setEmail("guest@example.com");
-          setPassword("123456");
-        }}
+        onClick={handleGuestLogin}
+        isLoading={loading}
       >
-        Get Guest User Credentials
+        Login as Guest
       </Button>
 
       <Box>

@@ -84,20 +84,22 @@ const createGroupChat = asyncHandler(async (req, res) => {
     return res.status(400).send({ message: "Invalid users format" });
   }
 
-  if (users.length < 2) {
+  if (!Array.isArray(users) || users.length < 2) {
     return res
       .status(400)
-      .send("More than 2 users are required to make a group chat");
+      .send({ message: "More than 2 users are required to make a group chat" });
   }
 
-  users.push(req.user);
+  // Extract only user ID strings if objects are sent
+  let userIds = users.map((u) => (typeof u === "object" && u._id ? u._id : u));
+  userIds.push(req.user._id);
 
   try {
     const groupChat = await Chat.create({
       chatName: req.body.name,
-      users: users,
+      users: userIds,
       isGroupChat: true,
-      groupAdmin: req.user,
+      groupAdmin: req.user._id,
     });
 
     const fullGroupChat = await Chat.findOne({ _id: groupChat._id })
