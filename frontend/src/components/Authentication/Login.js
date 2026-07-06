@@ -118,31 +118,81 @@ const Login = () => {
   };
 
   return (
-    <VStack spacing="5px">
-      <FormControl id="login-email" isRequired>
-        <FormLabel>Email</FormLabel>
+    <VStack spacing={5} align="stretch" w="100%">
+      <FormControl id="login-email">
+        <FormLabel
+          fontSize="xs"
+          fontWeight="700"
+          color="gray.500"
+          textTransform="uppercase"
+          letterSpacing="wider"
+          mb={1.5}
+        >
+          Email Address
+        </FormLabel>
         <Input
           name="email"
           type="email"
-          placeholder="Enter your email"
+          placeholder="your.email@example.com"
           value={email}
           autoComplete="new-email"
           onChange={(e) => setEmail(e.target.value)}
+          borderRadius="xl"
+          bg="gray.50"
+          border="1px solid"
+          borderColor="gray.200"
+          py={6}
+          _focus={{
+            bg: "white",
+            borderColor: "blue.500",
+            boxShadow: "0 0 0 1px rgba(66, 153, 225, 0.4)",
+          }}
+          _hover={{ borderColor: "gray.300" }}
+          transition="all 0.2s"
         />
       </FormControl>
 
-      <FormControl id="login-password" isRequired>
-        <FormLabel>Password</FormLabel>
+      <FormControl id="login-password">
+        <FormLabel
+          fontSize="xs"
+          fontWeight="700"
+          color="gray.500"
+          textTransform="uppercase"
+          letterSpacing="wider"
+          mb={1.5}
+        >
+          Password
+        </FormLabel>
         <InputGroup>
           <Input
             type={show ? "text" : "password"}
-            placeholder="Enter your password"
+            placeholder="••••••••"
             value={password}
             autoComplete="new-password"
             onChange={(e) => setPassword(e.target.value)}
+            borderRadius="xl"
+            bg="gray.50"
+            border="1px solid"
+            borderColor="gray.200"
+            py={6}
+            _focus={{
+              bg: "white",
+              borderColor: "blue.500",
+              boxShadow: "0 0 0 1px rgba(66, 153, 225, 0.4)",
+            }}
+            _hover={{ borderColor: "gray.300" }}
+            transition="all 0.2s"
           />
-          <InputRightElement width="4.5rem">
-            <Button h="1.5rem" size="sm" onClick={() => setShow(!show)}>
+          <InputRightElement h="100%" width="4.5rem">
+            <Button
+              h="1.75rem"
+              size="xs"
+              variant="ghost"
+              color="blue.500"
+              fontWeight="bold"
+              _hover={{ bg: "transparent", color: "blue.600" }}
+              onClick={() => setShow(!show)}
+            >
               {show ? "Hide" : "Show"}
             </Button>
           </InputRightElement>
@@ -150,28 +200,59 @@ const Login = () => {
       </FormControl>
 
       <Button
-        mt={4}
-        colorScheme="blue"
-        width="100%"
+        mt={2}
+        bgGradient="linear(to-r, blue.400, blue.600)"
+        color="white"
+        borderRadius="xl"
+        py={6}
+        fontSize="sm"
+        fontWeight="bold"
+        shadow="md"
+        _hover={{
+          bgGradient: "linear(to-r, blue.500, blue.700)",
+          transform: "translateY(-1px)",
+          shadow: "lg",
+        }}
+        _active={{ transform: "translateY(0)" }}
         onClick={submitHandler}
         isLoading={loading}
+        transition="all 0.2s"
       >
-        Login
+        Sign In
       </Button>
+
       <Button
-        colorScheme="red"
-        width="100%"
-        mt="15px"
+        variant="outline"
+        borderColor="gray.200"
+        color="blue.500"
+        borderRadius="xl"
+        py={6}
+        fontSize="sm"
+        fontWeight="bold"
+        _hover={{ bg: "blue.50", borderColor: "blue.100" }}
         onClick={handleGuestLogin}
         isLoading={loading}
+        transition="all 0.2s"
       >
         Login as Guest
       </Button>
 
-      <Box>
-        <Text mt={8} mb={6} color="blackAlpha.500">
-          <i>Sign-up or Log-in with Google Account</i>
+      <Box display="flex" alignItems="center" w="100%" my={2}>
+        <Box flex="1" h="1px" bg="gray.200" />
+        <Text
+          mx={3}
+          fontSize="2xs"
+          color="gray.400"
+          fontWeight="bold"
+          textTransform="uppercase"
+          letterSpacing="wider"
+        >
+          Or continue with
         </Text>
+        <Box flex="1" h="1px" bg="gray.200" />
+      </Box>
+
+      <Box w="100%">
         <FirebaseLogin />
       </Box>
     </VStack>

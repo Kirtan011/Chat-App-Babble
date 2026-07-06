@@ -128,35 +128,106 @@ const Signup = () => {
   };
 
   return (
-    <VStack spacing="5px">
+    <VStack spacing={4} align="stretch" w="100%">
       <FormControl id="first-name" isRequired>
-        <FormLabel> Name </FormLabel>
+        <FormLabel
+          fontSize="xs"
+          fontWeight="700"
+          color="gray.500"
+          textTransform="uppercase"
+          letterSpacing="wider"
+          mb={1.5}
+        >
+          Name
+        </FormLabel>
         <Input
-          name="name" //for autofill feature
-          placeholder="Enter Your Name"
+          name="name"
+          placeholder="John Doe"
           onChange={(e) => setName(e.target.value)}
+          borderRadius="xl"
+          bg="gray.50"
+          border="1px solid"
+          borderColor="gray.200"
+          py={6}
+          _focus={{
+            bg: "white",
+            borderColor: "blue.500",
+            boxShadow: "0 0 0 1px rgba(66, 153, 225, 0.4)",
+          }}
+          _hover={{ borderColor: "gray.300" }}
+          transition="all 0.2s"
         />
       </FormControl>
 
       <FormControl id="Signup-email" isRequired>
-        <FormLabel mt="2"> Email </FormLabel>
+        <FormLabel
+          fontSize="xs"
+          fontWeight="700"
+          color="gray.500"
+          textTransform="uppercase"
+          letterSpacing="wider"
+          mb={1.5}
+        >
+          Email Address
+        </FormLabel>
         <Input
-          name="email" //for autofill
-          placeholder="Enter Your Email"
+          name="email"
+          placeholder="your.email@example.com"
           onChange={(e) => setEmail(e.target.value)}
+          borderRadius="xl"
+          bg="gray.50"
+          border="1px solid"
+          borderColor="gray.200"
+          py={6}
+          _focus={{
+            bg: "white",
+            borderColor: "blue.500",
+            boxShadow: "0 0 0 1px rgba(66, 153, 225, 0.4)",
+          }}
+          _hover={{ borderColor: "gray.300" }}
+          transition="all 0.2s"
         />
       </FormControl>
 
       <FormControl id="Signup-password" isRequired>
-        <FormLabel mt="2"> Password </FormLabel>
+        <FormLabel
+          fontSize="xs"
+          fontWeight="700"
+          color="gray.500"
+          textTransform="uppercase"
+          letterSpacing="wider"
+          mb={1.5}
+        >
+          Password
+        </FormLabel>
         <InputGroup>
           <Input
             type={show ? "text" : "password"}
-            placeholder="Set Your Password"
+            placeholder="••••••••"
             onChange={(e) => setPassword(e.target.value)}
+            borderRadius="xl"
+            bg="gray.50"
+            border="1px solid"
+            borderColor="gray.200"
+            py={6}
+            _focus={{
+              bg: "white",
+              borderColor: "blue.500",
+              boxShadow: "0 0 0 1px rgba(66, 153, 225, 0.4)",
+            }}
+            _hover={{ borderColor: "gray.300" }}
+            transition="all 0.2s"
           />
-          <InputRightElement width="4.5rem">
-            <Button h="1.5rem" size="sm" onClick={() => setShow(!show)}>
+          <InputRightElement h="100%" width="4.5rem">
+            <Button
+              h="1.75rem"
+              size="xs"
+              variant="ghost"
+              color="blue.500"
+              fontWeight="bold"
+              _hover={{ bg: "transparent", color: "blue.600" }}
+              onClick={() => setShow(!show)}
+            >
               {show ? "Hide" : "Show"}
             </Button>
           </InputRightElement>
@@ -164,15 +235,44 @@ const Signup = () => {
       </FormControl>
 
       <FormControl id="Signup-confirm-password" isRequired>
-        <FormLabel mt="2"> Confirm Password </FormLabel>
+        <FormLabel
+          fontSize="xs"
+          fontWeight="700"
+          color="gray.500"
+          textTransform="uppercase"
+          letterSpacing="wider"
+          mb={1.5}
+        >
+          Confirm Password
+        </FormLabel>
         <InputGroup>
           <Input
             type={show ? "text" : "password"}
-            placeholder="Confirm Your Password"
+            placeholder="••••••••"
             onChange={(e) => setConfirmPassword(e.target.value)}
+            borderRadius="xl"
+            bg="gray.50"
+            border="1px solid"
+            borderColor="gray.200"
+            py={6}
+            _focus={{
+              bg: "white",
+              borderColor: "blue.500",
+              boxShadow: "0 0 0 1px rgba(66, 153, 225, 0.4)",
+            }}
+            _hover={{ borderColor: "gray.300" }}
+            transition="all 0.2s"
           />
-          <InputRightElement width="4.5rem">
-            <Button h="1.5rem" size="sm" onClick={() => setShow(!show)}>
+          <InputRightElement h="100%" width="4.5rem">
+            <Button
+              h="1.75rem"
+              size="xs"
+              variant="ghost"
+              color="blue.500"
+              fontWeight="bold"
+              _hover={{ bg: "transparent", color: "blue.600" }}
+              onClick={() => setShow(!show)}
+            >
               {show ? "Hide" : "Show"}
             </Button>
           </InputRightElement>
@@ -180,22 +280,64 @@ const Signup = () => {
       </FormControl>
 
       <FormControl id="pic">
-        <FormLabel mt="2"> Upload Your Picture (Optional) </FormLabel>
-        <Input
-          type="file"
-          p={1}
-          accept="image/*"
-          placeholder=""
-          onChange={(e) => postDetails(e.target.files[0])} //accept 1st image if multiple image selected
-        />
+        <FormLabel
+          fontSize="xs"
+          fontWeight="700"
+          color="gray.500"
+          textTransform="uppercase"
+          letterSpacing="wider"
+          mb={1.5}
+        >
+          Upload Profile Picture (Optional)
+        </FormLabel>
+        <Box
+          border="2px dashed"
+          borderColor="gray.200"
+          borderRadius="xl"
+          p={3}
+          textAlign="center"
+          bg="gray.50"
+          cursor="pointer"
+          position="relative"
+          _hover={{ borderColor: "blue.400", bg: "blue.50" }}
+          transition="all 0.2s"
+        >
+          <Input
+            type="file"
+            position="absolute"
+            top={0}
+            left={0}
+            width="100%"
+            height="100%"
+            opacity={0}
+            cursor="pointer"
+            accept="image/*"
+            onChange={(e) => postDetails(e.target.files[0])}
+          />
+          <Text fontSize="xs" fontWeight="bold" color="gray.500">
+            {pic ? "✅ Picture Selected" : "📁 Choose image file"}
+          </Text>
+        </Box>
       </FormControl>
 
       <Button
-        colorScheme="blue"
-        width="100%"
-        mt="15px"
+        mt={2}
+        bgGradient="linear(to-r, blue.400, blue.600)"
+        color="white"
+        borderRadius="xl"
+        py={6}
+        fontSize="sm"
+        fontWeight="bold"
+        shadow="md"
+        _hover={{
+          bgGradient: "linear(to-r, blue.500, blue.700)",
+          transform: "translateY(-1px)",
+          shadow: "lg",
+        }}
+        _active={{ transform: "translateY(0)" }}
         onClick={submitHandler}
         isLoading={loading}
+        transition="all 0.2s"
       >
         Sign Up
       </Button>
